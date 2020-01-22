@@ -14,6 +14,7 @@ using namespace std;
 
 void usage_error( const string & program_name )
 {
+    cerr << "WARNING: THIS PROGRAM HAS BEEN MODIFIED BY njay2@illinois.edu FOR TESTING PURPOSES!" << std::endl;
     cerr << "Usage: " << program_name << " UPLINK-TRACE DOWNLINK-TRACE [OPTION]... [COMMAND]" << endl;
     cerr << endl;
     cerr << "Options = --once" << endl;
@@ -70,7 +71,7 @@ string shell_quote( const string & arg )
 
 int main( int argc, char *argv[] )
 {
-    try {
+    //try {
         /* clear environment while running as root */
         char ** const user_environment = environ;
         environ = nullptr;
@@ -175,7 +176,13 @@ int main( int argc, char *argv[] )
             command.push_back( shell_path() );
         } else {
             for ( int i = optind + 2; i < argc; i++ ) {
-                command.push_back( argv[ i ] );
+                if (strcmp(argv[i], "sh") == 0) {
+                    std::cerr << "Found shell command!\n";
+                    command.push_back("sh");
+                    command.push_back("-c");
+                } else {
+                    command.push_back( argv[ i ] );
+                }
             }
         }
 
@@ -191,8 +198,10 @@ int main( int argc, char *argv[] )
                                        command_line );
 
         return link_shell_app.wait_for_exit();
+    /*
     } catch ( const exception & e ) {
         print_exception( e );
         return EXIT_FAILURE;
     }
+    */
 }
